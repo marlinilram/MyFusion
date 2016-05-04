@@ -1,0 +1,1 @@
+{"autodeskProduct":"Fusion360","type":"script","author":"Lin","description":{"":"Learn Brep Geometry"},"supportedOS":"windows|mac","editEnabled":true,"sourcewindows":"LearnGeometry.vcxproj","sourcemac":"LearnGeometry.xcodeproj"}

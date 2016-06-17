@@ -80,7 +80,7 @@ function run(context) {
         var threadInfo = threadFeatures.createThreadInfo(true, threadType, designation, threadClass);
         
         // get the face the thread will be applied to
-        var sideface = holes.item(0).sideFaces.item(0);
+        var sideface = holes.item(holes.count - 1).sideFaces.item(0);
         var faces = adsk.core.ObjectCollection.create();
         faces.add(sideface);
         

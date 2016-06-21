@@ -80,6 +80,7 @@ function run(context) {
         var threadInfo = threadFeatures.createThreadInfo(true, threadType, designation, threadClass);
         
         // get the face the thread will be applied to
+        // the newest hole feature
         var sideface = holes.item(holes.count - 1).sideFaces.item(0);
         var faces = adsk.core.ObjectCollection.create();
         faces.add(sideface);
@@ -128,9 +129,13 @@ function run(context) {
             
             var inputs = command.commandInputs;
 
-            var i1 = inputs.addSelectionInput('entity', 'Entity One', 'Please select a plane');
-
+            // select base face for hole
+            var i1 = inputs.addSelectionInput('HoleThread_selectEntity', 'Entity One', 'Please select a plane');
             i1.addSelectionFilter(adsk.core.SelectionCommandInput.PlanarFaces);
+            
+            // control radius of hole
+            var i2 = inputs.addDistanceValueCommandInput('HoleThread_radiusControl', 'Radius', adsk.core.ValueInput.createByReal(1));
+            i2.isEnabled = false;
         }
         catch (e) {
             ui.messageBox('Failed to create command : ' + (e.description ? e.description : e));

@@ -96,6 +96,33 @@ function run(context) {
         //ui.messageBox('In Command Execute Event Handler');
     };
     
+    var onInputChanged = function(args) {
+        // Get command
+        //var command = args.command;
+        var inputs = args.inputs;
+        var input0 = inputs.item(0);
+        var input1 = inputs.item(1);
+        
+        if (input0.selectionCount != 0) {
+            var sel0 = input0.selection(0);
+        
+            var pt0 = sel0.point;
+            var planeFace0 = sel0.entity;
+            var endPt = planeFace0.pointOnFace;
+            var dir = adsk.core.Vector3D.create(endPt.x - pt0.x, endPt.y - pt0.y, endPt.z - pt0.z);
+            dir.normalize();
+            
+            input1.setManipulator(pt0, dir);
+            input1.isVisible = true;
+        
+            //ui.messageBox('test X: ' + dir.x + ' Y: ' + dir.y + ' Z: ' + dir.z);
+        }
+        else {
+            input1.isVisible = false;
+        }
+        
+    };
+    
     var onCommandExecutedPreview = function(args) {
         // Get command
         var command = args.command;
@@ -107,9 +134,11 @@ function run(context) {
         var pt0 = sel0.point;
         var planeFace0 = sel0.entity;
         
+        var input1 = inputs.item(1);        
+        
         // Create a hole input
         var holes = rootComp.features.holeFeatures;
-        var holeInput = holes.createSimpleInput(adsk.core.ValueInput.createByString('10 mm'));
+        var holeInput = holes.createSimpleInput(adsk.core.ValueInput.createByReal(2 * input1.value));
         holeInput.setPositionByPoint(planeFace0, pt0);
         holeInput.setDistanceExtent(adsk.core.ValueInput.createByReal(1));
         
@@ -125,6 +154,7 @@ function run(context) {
             command.isRepeatable = false;
             command.execute.add(onCommandExecuted);
             command.executePreview.add(onCommandExecutedPreview);
+            command.inputChanged.add(onInputChanged);
             //command.destroy.add(function () { adsk.terminate(); });
             
             var inputs = command.commandInputs;
@@ -134,8 +164,9 @@ function run(context) {
             i1.addSelectionFilter(adsk.core.SelectionCommandInput.PlanarFaces);
             
             // control radius of hole
-            var i2 = inputs.addDistanceValueCommandInput('HoleThread_radiusControl', 'Radius', adsk.core.ValueInput.createByReal(1));
-            i2.isEnabled = false;
+            var i2 = inputs.addDistanceValueCommandInput('HoleThread_radiusControl', 'Radius', adsk.core.ValueInput.createByReal(0.5));
+            i2.isEnabled = true;
+            i2.isVisible = false;
         }
         catch (e) {
             ui.messageBox('Failed to create command : ' + (e.description ? e.description : e));

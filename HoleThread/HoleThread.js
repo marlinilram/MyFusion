@@ -51,11 +51,15 @@ function run(context) {
         var pt0 = sel0.point;
         var planeFace0 = sel0.entity;
         
+        var input1 = inputs.item(1);
+        
+        var input2 = inputs.item(2);
+        
         // Create a hole input
         var holes = rootComp.features.holeFeatures;
-        var holeInput = holes.createSimpleInput(adsk.core.ValueInput.createByString('10 mm'));
+        var holeInput = holes.createSimpleInput(adsk.core.ValueInput.createByReal(2 * input1.value));
         holeInput.setPositionByPoint(planeFace0, pt0);
-        holeInput.setDistanceExtent(adsk.core.ValueInput.createByReal(1));
+        holeInput.setDistanceExtent(adsk.core.ValueInput.createByReal(input2.value));
         
         var hole = holes.add(holeInput);
         
@@ -69,7 +73,7 @@ function run(context) {
         // Declare the output arguments as objects.
         var designationObj = {};
         var threadClassObj = {};
-        var returnValue = threadDataQuery.recommendThreadData(1.0, true, threadType, designationObj, threadClassObj);
+        var returnValue = threadDataQuery.recommendThreadData(2 * input1.value, true, threadType, designationObj, threadClassObj);
 
 
         // Get the returned values from the objects.
@@ -87,8 +91,8 @@ function run(context) {
         
         // define the thread input with the lenght 3.5 cm
         var threadInput = threadFeatures.createInput(faces, threadInfo);
-        threadInput.isFullLength = true;
-        //threadInput.threadLength = adsk.core.ValueInput.createByReal(3.5);
+        //threadInput.isFullLength = true;
+        threadInput.threadLength = adsk.core.ValueInput.createByReal(input2.value);
         
         // create the final thread
         var thread = threadFeatures.add(threadInput);
@@ -134,13 +138,15 @@ function run(context) {
         var pt0 = sel0.point;
         var planeFace0 = sel0.entity;
         
-        var input1 = inputs.item(1);        
+        var input1 = inputs.item(1);     
+        
+        var input2 = inputs.item(2);
         
         // Create a hole input
         var holes = rootComp.features.holeFeatures;
         var holeInput = holes.createSimpleInput(adsk.core.ValueInput.createByReal(2 * input1.value));
         holeInput.setPositionByPoint(planeFace0, pt0);
-        holeInput.setDistanceExtent(adsk.core.ValueInput.createByReal(1));
+        holeInput.setDistanceExtent(adsk.core.ValueInput.createByReal(input2.value));
         
         var hole = holes.add(holeInput);
         
@@ -167,6 +173,9 @@ function run(context) {
             var i2 = inputs.addDistanceValueCommandInput('HoleThread_radiusControl', 'Radius', adsk.core.ValueInput.createByReal(0.5));
             i2.isEnabled = true;
             i2.isVisible = false;
+            
+            // control depth of hole
+            var i3 = inputs.addFloatSpinnerCommandInput('HoleThread_depthControl', 'Depth', 'mm', 0.1, 100.0, 0.1, 1.0);
         }
         catch (e) {
             ui.messageBox('Failed to create command : ' + (e.description ? e.description : e));

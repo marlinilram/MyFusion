@@ -85,19 +85,23 @@ function run(context) {
         
         // get the face the thread will be applied to
         // the newest hole feature
-        var sideface = holes.item(holes.count - 1).sideFaces.item(0);
         var faces = adsk.core.ObjectCollection.create();
-        faces.add(sideface);
+        var sideFaces = holes.item(holes.count - 1).sideFaces;
+        if(sideFaces.count > 1) {
+            ui.messageBox('Errors. Number of SideFaces: ' + sideFaces.count);
+            return;
+        }
+        else {
+            faces.add(sideFaces.item(0));
+        }
         
-        // define the thread input with the lenght 3.5 cm
+        // define the thread input with threadInfo
         var threadInput = threadFeatures.createInput(faces, threadInfo);
         //threadInput.isFullLength = true;
         threadInput.threadLength = adsk.core.ValueInput.createByReal(input2.value);
         
         // create the final thread
         var thread = threadFeatures.add(threadInput);
-        
-        //ui.messageBox('In Command Execute Event Handler');
     };
     
     var onInputChanged = function(args) {
